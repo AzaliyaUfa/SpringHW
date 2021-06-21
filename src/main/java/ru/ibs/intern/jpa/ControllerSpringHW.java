@@ -1,7 +1,6 @@
 package ru.ibs.intern.jpa;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,7 +10,7 @@ import ru.ibs.intern.jpa.repo.*;
 import ru.ibs.intern.jpa.service.CarServiceImpl;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -39,8 +38,8 @@ public class ControllerSpringHW {
 
             //////
 
-            {"manufacturerName": "ford",
-            "modelName": "focus",
+            {"manufacturerName": "lada",
+            "modelName": "kalina",
             "engine": {
 	                "type": "petrol"
             }}*/
@@ -56,9 +55,12 @@ public class ControllerSpringHW {
         }
     }
 
+
+    // {"type": "electrical"}
     @PostMapping(value = "engine/create", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public void createCar(@RequestBody Engine engine) {
+    public Engine createCar(@RequestBody Engine engine) {
         engineRepository.save(engine);
+        return engine;
     }
 
     // {"gearSize": 10}
@@ -77,33 +79,21 @@ public class ControllerSpringHW {
         manualRepository.save(manual);
     }
 
+
     /// READ ///
 
-    /*@GetMapping("car/read")
+
+    @GetMapping("car/read")
     public List<Car> retrieveAllCars() {
         return carRepository.findAll();
-    }*/
-
-    /*@GetMapping("car/read")
-    public String retrieveAllCars() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(carRepository.findAll());
-    }*/
-
-    @GetMapping(value = "car/read{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Car retrieveById(@PathVariable Long id) {
-        return carRepository.getById(id);
     }
 
-    @GetMapping(value = "car/read{id1}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Car retrieveById1(@RequestParam Long id1) {
-        return carRepository.getById(id1);
+    @GetMapping("car/read/{id}")
+    public Car getCarById(@PathVariable Long id) {
+        Optional<Car> car = carRepository.findById(id);
+        return car.get();
     }
 
-    @GetMapping(value = "car/read{id2}")
-    public String retrieveById2(@RequestParam Long id2) throws JsonProcessingException {
-        //return "ID = " + id2;
-        return objectMapper.writeValueAsString(carRepository.getById(id2));
-    }
 
     @GetMapping("gear/read")
     public List<Gear> retrieveAllGears() {
@@ -111,16 +101,30 @@ public class ControllerSpringHW {
     }
 
     @GetMapping("gear/read/{id}")
-    public Gear getGearById(@PathVariable Long id) {
-        Optional<Gear> gear = gearRepository.findById(id);
-        return gear.get();
+    public Gear getGearById(@PathVariable Long id) throws Exception {
+        try {
+            Optional<Gear> gear = gearRepository.findById(id);
+            return gear.get();
+        } catch (Exception e) {
+            throw new Exception("No gear with id = " + id);
+        }
     }
 
 
     /// UPDATE ///
 
 
-    @PostMapping(value ={"gear/update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value ={"gear/update/","gear/update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public void updateGear(@RequestBody Gear gear, @RequestParam(name = "id", required = false) Long id) {
+        if (Objects.isNull(id)) {
+            throw new RuntimeException("Empty id!");
+        }
+        gear.setId(id);
+        gearRepository.save(gear);
+        System.out.println("Gear with id = " + id + " is updated.");
+    }
+
+    /*@PostMapping(value ={"gear/update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public void updateGear(@RequestBody Gear gear, @RequestParam(name = "id") Long id) {
         try {
             Optional<Gear> gearOptional = gearRepository.findById(id);
@@ -130,7 +134,7 @@ public class ControllerSpringHW {
         gear.setId(id);
         gearRepository.save(gear);
         System.out.println("Gear with id = " + id + " is updated.");
-    }
+    }*/
 
     /// DELETE ///
 
