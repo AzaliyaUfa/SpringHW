@@ -4,7 +4,11 @@ package ru.ibs.intern.jpa.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.ibs.intern.jpa.entities.*;
+import ru.ibs.intern.jpa.exceptions.NoElementException;
+import ru.ibs.intern.jpa.exceptions.NoIdException;
 import ru.ibs.intern.jpa.repo.CarRepository;
+
+import java.util.List;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -34,5 +38,15 @@ public class CarServiceImpl implements CarService {
         electricManual.getEngines().add(engine);
 
         return carRepository.save(newCar);
+    }
+
+    public List<Car> getById(Long id) {
+        List<Car> carList = carRepository.findAllById(id);
+        if(carList.isEmpty() && id == null) {
+            throw new NoIdException();
+        } else if (carList.isEmpty()) {
+            throw new NoElementException("Car with id = " + id + " is not found.");
+        }
+        return carList;
     }
 }
