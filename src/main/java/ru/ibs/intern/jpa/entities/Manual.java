@@ -1,5 +1,6 @@
 package ru.ibs.intern.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +19,7 @@ public class Manual {
 
     String type;
 
+    @JsonIgnoreProperties("expenses")
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "manuals")
     List<Engine> engines;
 

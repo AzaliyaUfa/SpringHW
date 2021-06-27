@@ -1,2 +1,4 @@
-package ru.ibs.intern.jpa.service.interfaces;public interface EngineService {
+package ru.ibs.intern.jpa.service.interfaces;
+
+public interface EngineService {
 }

@@ -4,59 +4,59 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.ibs.intern.jpa.entities.SteeringWheel;
+import ru.ibs.intern.jpa.entities.Manual;
 import ru.ibs.intern.jpa.exceptions.LinkedItemException;
 import ru.ibs.intern.jpa.exceptions.NoElementException;
 import ru.ibs.intern.jpa.exceptions.NoIdException;
-import ru.ibs.intern.jpa.repo.SteeringWheelRepository;
+import ru.ibs.intern.jpa.repo.ManualRepository;
 import ru.ibs.intern.jpa.responses.Response;
-import ru.ibs.intern.jpa.service.interfaces.SteeringWheelService;
+import ru.ibs.intern.jpa.service.interfaces.ManualService;
 
 import java.util.List;
 
 @Service
-public class SteeringWheelServiceImpl implements SteeringWheelService {
+public class ManualServiceImpl implements ManualService {
 
     @Autowired
-    private SteeringWheelRepository swRepository;
+    private ManualRepository manualRepository;
 
-    public Response createSteeringWheel(SteeringWheel sw) {
-        SteeringWheel newSteeringWheel;
-        if (sw == null) {
+    public Response createManual(Manual manual) {
+        Manual newManual;
+        if (manual == null) {
             throw new ResourceNotFoundException("Empty", new Throwable());
         } else {
-            newSteeringWheel = swRepository.save(sw);
+            newManual = manualRepository.save(manual);
         }
-        return new Response(newSteeringWheel.getId(), "Steering wheel", "created");
+        return new Response(newManual.getId(), "Manual", "created");
     }
 
-    public List<SteeringWheel> getById(Long id) {
-        List<SteeringWheel> steeringWheelList = swRepository.findAllById(id);
-        if(steeringWheelList.isEmpty() && id == null) {
+    public List<Manual> getById(Long id) {
+        List<Manual> manualList = manualRepository.findAllById(id);
+        if(manualList.isEmpty() && id == null) {
             throw new NoIdException();
-        } else if (steeringWheelList.isEmpty()) {
-            throw new NoElementException("Steering wheel with id = " + id + " is not found.");
+        } else if (manualList.isEmpty()) {
+            throw new NoElementException("Manual with id = " + id + " is not found.");
         }
-        return steeringWheelList;
+        return manualList;
     }
 
-    public Response updateSteeringWheel(Long id, SteeringWheel sw) {
+    public Response updateManual(Long id, Manual manual) {
         getById(id);
-        sw.setId(id);
-        swRepository.save(sw);
-        return new Response(id, "Steering wheel", "updated");
+        manual.setId(id);
+        manualRepository.save(manual);
+        return new Response(id, "Manual", "updated");
     }
 
 
-    public Response deleteSteeringWheel(Long id) {
+    public Response deleteManual(Long id) {
         getById(id);
         try{
-            swRepository.deleteById(id);
+            manualRepository.deleteById(id);
         }
         catch (DataIntegrityViolationException ex) {
             throw new LinkedItemException();
         }
-        return new Response(id, "Steering wheel", "deleted");
+        return new Response(id, "Manual", "deleted");
     }
 
 }

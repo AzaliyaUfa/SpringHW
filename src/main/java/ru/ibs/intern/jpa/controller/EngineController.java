@@ -1,75 +1,71 @@
 package ru.ibs.intern.jpa.controller;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.ibs.intern.jpa.entities.*;
-import ru.ibs.intern.jpa.repo.*;
+import ru.ibs.intern.jpa.entities.Engine;
+import ru.ibs.intern.jpa.repo.EngineRepository;
 import ru.ibs.intern.jpa.responses.Response;
-import ru.ibs.intern.jpa.service.serviceImpl.CarServiceImpl;
+import ru.ibs.intern.jpa.service.serviceImpl.EngineServiceImpl;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/car")
-public class CarController {
+@RequestMapping("/api/engine")
+public class EngineController {
 
     @Autowired
-    private CarRepository carRepository;
-    @Autowired
-    private CarServiceImpl carService;
+    private EngineRepository engineRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private EngineServiceImpl engineService;
 
 
-    /*{"manufacturerName": "ford",
-            "modelName": "focus"}
+    /*      {"type": "petrol"}
 
-            //////
+            //////   gears без id двигателя
 
-            {"manufacturerName": "lada",
-            "modelName": "kalina",
-            "engine": {
-	                "type": "petrol"
-            }}*/
+            {"type": "petrol",
+            "gears":[
+            {"gearSize": 5},
+            {"gearSize": 10}
+            ]}
+     */
+
 
     /// CREATE ///
 
     @PostMapping(value = "create", consumes = {MediaType.APPLICATION_JSON_VALUE},
                                     produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response createCar(@RequestBody Car car) {
-        return carService.createCar(car);
+    public Response createEngine(@RequestBody Engine engine) {
+        return engineService.createEngine(engine);
     }
 
     /// READ ///
 
     @GetMapping(value ={"read","read/","read/{id}"})
-    public List<Car> readCar(@PathVariable(name = "id", required = false) Long id ) {
+    public List<Engine> readEngine(@PathVariable(name = "id", required = false) Long id ) {
         if (id != null) {
-            return carService.getById(id);
+            return engineService.getById(id);
         } else {
-            return carRepository.findAll();
+            return engineRepository.findAll();
         }
     }
 
-    /// UPDATE ///
+    /// UPDATE ///  {"type": "electrical"}
 
     @PostMapping(value ={"update","update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response updateCar(@RequestBody Car car, @PathVariable(name = "id", required = false) Long id) {
-        return carService.updateCar(id, car);
+    public Response updateEngine(@RequestBody Engine engine, @PathVariable(name = "id", required = false) Long id) {
+        return engineService.updateEngine(id, engine);
     }
 
     /// DELETE ///
 
     @PostMapping(value ={"delete","delete/{id}"})
-    public Response deleteCar(@PathVariable(name = "id", required = false) Long id) throws Exception {
-        return carService.deleteCar(id);
+    public Response deleteEngine(@PathVariable(name = "id", required = false) Long id) throws Exception {
+        return engineService.deleteEngine(id);
     }
 
 }

@@ -3,7 +3,7 @@ package ru.ibs.intern.jpa.service.interfaces;
 
 import ru.ibs.intern.jpa.entities.Car;
 
-public interface CarService {
+public interface ManualService {
 
-    Car addCar(String mnfName, String modelName, String engineType);
+
 }

@@ -1,5 +1,8 @@
 package ru.ibs.intern.jpa.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Engine {
 
@@ -20,6 +24,7 @@ public class Engine {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "engine")
     private List<Gear> gears;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Manual> manuals;
 

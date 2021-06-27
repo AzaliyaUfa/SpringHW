@@ -1,4 +1,4 @@
-package ru.ibs.intern.jpa.service;
+package ru.ibs.intern.jpa.service.interfaces;
 
 
 import ru.ibs.intern.jpa.entities.Car;

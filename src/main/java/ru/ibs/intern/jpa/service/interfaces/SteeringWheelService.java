@@ -1,9 +1,6 @@
 package ru.ibs.intern.jpa.service.interfaces;
 
+public interface SteeringWheelService {
 
-import ru.ibs.intern.jpa.entities.Car;
 
-public interface CarService {
-
-    Car addCar(String mnfName, String modelName, String engineType);
 }

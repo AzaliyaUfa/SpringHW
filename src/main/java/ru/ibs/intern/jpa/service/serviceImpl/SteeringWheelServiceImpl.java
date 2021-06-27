@@ -2,55 +2,61 @@ package ru.ibs.intern.jpa.service.serviceImpl;
 
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.ibs.intern.jpa.entities.Car;
-import ru.ibs.intern.jpa.entities.Engine;
+import ru.ibs.intern.jpa.entities.SteeringWheel;
+import ru.ibs.intern.jpa.exceptions.LinkedItemException;
 import ru.ibs.intern.jpa.exceptions.NoElementException;
 import ru.ibs.intern.jpa.exceptions.NoIdException;
-import ru.ibs.intern.jpa.repo.EngineRepository;
+import ru.ibs.intern.jpa.repo.SteeringWheelRepository;
 import ru.ibs.intern.jpa.responses.Response;
-import ru.ibs.intern.jpa.service.interfaces.EngineService;
+import ru.ibs.intern.jpa.service.interfaces.SteeringWheelService;
 
 import java.util.List;
 
 @Service
-public class EngineServiceImpl implements EngineService {
+public class SteeringWheelServiceImpl implements SteeringWheelService {
 
     @Autowired
-    private EngineRepository engineRepository;
+    private SteeringWheelRepository swRepository;
 
-    public Response createEngine(Engine engine) {
-        Engine newEngine;
-        if (engine == null) {
+    public Response createSteeringWheel(SteeringWheel sw) {
+        SteeringWheel newSteeringWheel;
+        if (sw == null) {
             throw new ResourceNotFoundException("Empty", new Throwable());
         } else {
-            newEngine = engineRepository.save(engine);
+            newSteeringWheel = swRepository.save(sw);
         }
-        return new Response(newEngine.getId(), "Engine", "created");
+        return new Response(newSteeringWheel.getId(), "Steering wheel", "created");
     }
 
-    public List<Engine> getById(Long id) {
-        List<Engine> engineList = engineRepository.findAllById(id);
-        if(engineList.isEmpty() && id == null) {
+    public List<SteeringWheel> getById(Long id) {
+        List<SteeringWheel> steeringWheelList = swRepository.findAllById(id);
+        if(steeringWheelList.isEmpty() && id == null) {
             throw new NoIdException();
-        } else if (engineList.isEmpty()) {
-            throw new NoElementException("Car with id = " + id + " is not found.");
+        } else if (steeringWheelList.isEmpty()) {
+            throw new NoElementException("Steering wheel with id = " + id + " is not found.");
         }
-        return engineList;
+        return steeringWheelList;
     }
 
-    public Response updateEngine(Long id, Engine engine) {
+    public Response updateSteeringWheel(Long id, SteeringWheel sw) {
         getById(id);
-        engine.setId(id);
-        engineRepository.save(engine);
-        return new Response(id, "engine", "updated");
+        sw.setId(id);
+        swRepository.save(sw);
+        return new Response(id, "Steering wheel", "updated");
     }
 
 
-    public Response deleteEngine(Long id) {
+    public Response deleteSteeringWheel(Long id) {
         getById(id);
-        engineRepository.deleteById(id);
-        return new Response(id, "engine", "deleted");
+        try{
+            swRepository.deleteById(id);
+        }
+        catch (DataIntegrityViolationException ex) {
+            throw new LinkedItemException();
+        }
+        return new Response(id, "Steering wheel", "deleted");
     }
 
 }

@@ -1,56 +1,45 @@
 package ru.ibs.intern.jpa.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.ibs.intern.jpa.entities.*;
-import ru.ibs.intern.jpa.repo.*;
+import ru.ibs.intern.jpa.entities.Manual;
+import ru.ibs.intern.jpa.repo.ManualRepository;
 import ru.ibs.intern.jpa.responses.Response;
-import ru.ibs.intern.jpa.service.serviceImpl.CarServiceImpl;
+import ru.ibs.intern.jpa.service.serviceImpl.ManualServiceImpl;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/car")
-public class CarController {
+@RequestMapping("/api/manual")
+public class ManualController {
 
     @Autowired
-    private CarRepository carRepository;
+    private ManualRepository manualRepository;
     @Autowired
-    private CarServiceImpl carService;
+    private ManualServiceImpl manualService;
 
 
-    /*{"manufacturerName": "ford",
-            "modelName": "focus"}
-
-            //////
-
-            {"manufacturerName": "lada",
-            "modelName": "kalina",
-            "engine": {
-	                "type": "petrol"
-            }}*/
+    // {"type": "Cylinder head manual for petrol"}
 
     /// CREATE ///
 
     @PostMapping(value = "create", consumes = {MediaType.APPLICATION_JSON_VALUE},
                                     produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response createCar(@RequestBody Car car) {
-        return carService.createCar(car);
+    public Response createManual(@RequestBody Manual manual) {
+        return manualService.createManual(manual);
     }
 
     /// READ ///
 
     @GetMapping(value ={"read","read/","read/{id}"})
-    public List<Car> readCar(@PathVariable(name = "id", required = false) Long id ) {
+    public List<Manual> readManual(@PathVariable(name = "id", required = false) Long id ) {
         if (id != null) {
-            return carService.getById(id);
+            return manualService.getById(id);
         } else {
-            return carRepository.findAll();
+            return manualRepository.findAll();
         }
     }
 
@@ -58,15 +47,15 @@ public class CarController {
 
     @PostMapping(value ={"update","update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response updateCar(@RequestBody Car car, @PathVariable(name = "id", required = false) Long id) {
-        return carService.updateCar(id, car);
+    public Response updateManual(@RequestBody Manual manual, @PathVariable(name = "id", required = false) Long id) {
+        return manualService.updateManual(id, manual);
     }
 
     /// DELETE ///
 
     @PostMapping(value ={"delete","delete/{id}"})
-    public Response deleteCar(@PathVariable(name = "id", required = false) Long id) throws Exception {
-        return carService.deleteCar(id);
+    public Response deleteManual(@PathVariable(name = "id", required = false) Long id) throws Exception {
+        return manualService.deleteManual(id);
     }
 
 }

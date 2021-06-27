@@ -1,12 +1,15 @@
-package ru.ibs.intern.jpa.service;
+package ru.ibs.intern.jpa.service.serviceImpl;
 
 
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.ibs.intern.jpa.entities.*;
 import ru.ibs.intern.jpa.exceptions.NoElementException;
 import ru.ibs.intern.jpa.exceptions.NoIdException;
 import ru.ibs.intern.jpa.repo.CarRepository;
+import ru.ibs.intern.jpa.responses.Response;
+import ru.ibs.intern.jpa.service.interfaces.CarService;
 
 import java.util.List;
 
@@ -40,6 +43,19 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(newCar);
     }
 
+    public Response createCar(Car car) {
+        Car newCar;
+        if (car == null) {
+            throw new ResourceNotFoundException("Empty", new Throwable());
+        } else if (car.getManufacturerName() != null && car.getModelName() != null
+                && car.getEngine() != null &&  car.getEngine().getType() != null) {
+            newCar = addCar(car.getManufacturerName(), car.getModelName(), car.getEngine().getType());
+        } else {
+            newCar = carRepository.save(car);
+        }
+        return new Response(newCar.getId(), "Car", "created");
+    }
+
     public List<Car> getById(Long id) {
         List<Car> carList = carRepository.findAllById(id);
         if(carList.isEmpty() && id == null) {
@@ -49,4 +65,19 @@ public class CarServiceImpl implements CarService {
         }
         return carList;
     }
+
+    public Response updateCar(Long id, Car car) {
+        getById(id);
+        car.setId(id);
+        carRepository.save(car);
+        return new Response(id, "car", "updated");
+    }
+
+    public Response deleteCar(Long id) {
+        getById(id);
+        carRepository.deleteById(id);
+        return new Response(id, "car", "deleted");
+    }
+
+
 }

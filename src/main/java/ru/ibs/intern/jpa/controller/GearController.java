@@ -1,56 +1,60 @@
 package ru.ibs.intern.jpa.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.ibs.intern.jpa.entities.*;
-import ru.ibs.intern.jpa.repo.*;
+import ru.ibs.intern.jpa.entities.Gear;
+import ru.ibs.intern.jpa.repo.GearRepository;
 import ru.ibs.intern.jpa.responses.Response;
 import ru.ibs.intern.jpa.service.serviceImpl.CarServiceImpl;
+import ru.ibs.intern.jpa.service.serviceImpl.GearSeviceImpl;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/car")
-public class CarController {
+@RequestMapping("/api/gear")
+public class GearController {
 
     @Autowired
-    private CarRepository carRepository;
+    private GearRepository gearRepository;
     @Autowired
-    private CarServiceImpl carService;
+    private GearSeviceImpl gearService;
 
 
-    /*{"manufacturerName": "ford",
-            "modelName": "focus"}
+    /*{"gearSize": 14}
 
             //////
 
-            {"manufacturerName": "lada",
-            "modelName": "kalina",
+            {"gearSize": 13,
             "engine": {
+                    "id": 11,
 	                "type": "petrol"
-            }}*/
+            }}
+
+            {"gearSize": 13,
+            "engine": {
+                    "id": 500,
+	                "type": "petrol"
+            }} */
 
     /// CREATE ///
 
     @PostMapping(value = "create", consumes = {MediaType.APPLICATION_JSON_VALUE},
                                     produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response createCar(@RequestBody Car car) {
-        return carService.createCar(car);
+    public Response createCar(@RequestBody Gear gear) {
+        return gearService.createGear(gear);
     }
 
     /// READ ///
 
     @GetMapping(value ={"read","read/","read/{id}"})
-    public List<Car> readCar(@PathVariable(name = "id", required = false) Long id ) {
+    public List<Gear> readCar(@PathVariable(name = "id", required = false) Long id ) {
         if (id != null) {
-            return carService.getById(id);
+            return gearService.getById(id);
         } else {
-            return carRepository.findAll();
+            return gearRepository.findAll();
         }
     }
 
@@ -58,15 +62,15 @@ public class CarController {
 
     @PostMapping(value ={"update","update/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response updateCar(@RequestBody Car car, @PathVariable(name = "id", required = false) Long id) {
-        return carService.updateCar(id, car);
+    public Response updateCar(@RequestBody Gear gear, @PathVariable(name = "id", required = false) Long id) {
+        return gearService.updateGear(id, gear);
     }
 
     /// DELETE ///
 
     @PostMapping(value ={"delete","delete/{id}"})
     public Response deleteCar(@PathVariable(name = "id", required = false) Long id) throws Exception {
-        return carService.deleteCar(id);
+        return gearService.deleteGear(id);
     }
 
 }
